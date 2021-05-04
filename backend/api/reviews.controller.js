@@ -1,4 +1,4 @@
-import ReviewsDOA from "../dao/reviewsDAO.js";
+import ReviewsDAO from "../dao/reviewsDAO.js";
 
 export default class ReviewsController {
   static async apiPostReview(req, res, next) {
@@ -11,7 +11,7 @@ export default class ReviewsController {
       };
       const date = new Date();
 
-      const ReviewResponse = await ReviewsDOA.addReview(
+      const ReviewResponse = await ReviewsDAO.addReview(
         restaurantId,
         userInfo,
         review,
@@ -23,26 +23,27 @@ export default class ReviewsController {
     }
   }
 
-  static async apiUpdateReview(res, req, next) {
+  static async apiUpdateReview(req, res, next) {
     try {
       const reviewId = req.body.review_id;
       const text = req.body.text;
       const date = new Date();
 
       //we get the user_id so we can confirm they are updating a review they wrote
-      const reviewResponse = await ReviewsDOA.updateReview(
+      const reviewResponse = await ReviewsDAO.updateReview(
         reviewId,
         req.body.user_id,
         text,
         date
       );
+
       var { error } = reviewResponse;
       if (error) {
         res.status(400).json({ error });
       }
       if (reviewResponse.modifiedCount === 0) {
         throw new Error(
-          "unable to update review - user may not be the original author"
+          "unable to update review - user may not be original poster"
         );
       }
 
@@ -58,7 +59,8 @@ export default class ReviewsController {
       const reviewId = req.query._id;
       const userId = req.body.user_id;
       console.log(reviewId);
-      const reviewResponse = await ReviewsDOA.apiDeleteReview(reviewId, userId);
+      const reviewResponse = await ReviewsDAO.deleteReview(reviewId, userId);
+      res.json({ status: "success" });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
