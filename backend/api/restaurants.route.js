@@ -6,7 +6,9 @@ import ReviewsController from "./reviews.controller.js";
 const router = express.Router();
 
 //Create routes
-router.route("/").get(RestaurantsController.apiGetRestaurants); //Root url
+router.route("/").get(RestaurantsController.apiGetRestaurants);
+router.route("/id/:id").get(RestaurantsController.apiGetRestaurantById);
+router.route("/cuisines").get(RestaurantsController.apiGetRestaurantCuisines); //gets list of all cuisines
 
 router
   .route("/review")
