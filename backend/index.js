@@ -2,6 +2,7 @@ import app from "./server.js";
 import mongodb from "mongodb";
 import dotenv from "dotenv";
 import RestaurantsDAO from "./dao/restaurantsDAO.js";
+import ReviewsDAO from "./dao/reviewsDAO.js";
 
 //NOTE: This file connects to our server
 
@@ -26,7 +27,7 @@ MongoClient.connect(
     wtimeout: 2500,
     //added to work with new mongodb
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    //useUnifiedTopology: true,
   }
 )
   .catch((error) => {
@@ -36,6 +37,7 @@ MongoClient.connect(
   .then(async (client) => {
     //Call injectDB get initial collection
     await RestaurantsDAO.injectDB(client);
+    await ReviewsDAO.injectDB(client);
     //Starting web server
     app.listen(port, () => {
       console.log(`listening on port ${port}`);

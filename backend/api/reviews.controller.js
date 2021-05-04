@@ -1,0 +1,66 @@
+import ReviewsDOA from "../dao/reviewsDAO.js";
+
+export default class ReviewsController {
+  static async apiPostReview(req, res, next) {
+    try {
+      const restaurantId = req.body.restaurant_id;
+      const review = req.body.text;
+      const userInfo = {
+        name: req.body.name,
+        _id: req.body.user_id,
+      };
+      const date = new Date();
+
+      const ReviewResponse = await ReviewsDOA.addReview(
+        restaurantId,
+        userInfo,
+        review,
+        date
+      );
+      res.json({ status: "success" });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiUpdateReview(res, req, next) {
+    try {
+      const reviewId = req.body.review_id;
+      const text = req.body.text;
+      const date = new Date();
+
+      //we get the user_id so we can confirm they are updating a review they wrote
+      const reviewResponse = await ReviewsDOA.updateReview(
+        reviewId,
+        req.body.user_id,
+        text,
+        date
+      );
+      var { error } = reviewResponse;
+      if (error) {
+        res.status(400).json({ error });
+      }
+      if (reviewResponse.modifiedCount === 0) {
+        throw new Error(
+          "unable to update review - user may not be the original author"
+        );
+      }
+
+      res.json({ status: "success" });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+
+  static async apiDeleteReview(req, res, next) {
+    try {
+      //Non-standard to have anything in the body of a delete request, but just a psudo-authentication for the interim
+      const reviewId = req.query._id;
+      const userId = req.body.user_id;
+      console.log(reviewId);
+      const reviewResponse = await ReviewsDOA.apiDeleteReview(reviewId, userId);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+}

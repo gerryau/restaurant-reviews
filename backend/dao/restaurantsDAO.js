@@ -2,7 +2,7 @@
 let restaurants;
 
 //DAO = Document Access Object
-export default class RestauarantDAO {
+export default class RestauarantsDAO {
   //Initially connect to our database
   //Call this as soon as our server starts giving us a reference to our restaurants db
   static async injectDB(connection) {
@@ -11,7 +11,7 @@ export default class RestauarantDAO {
     }
     try {
       restaurants = await connection
-        .db(process.env.RESTREVIEWS_NS)
+        .db(process.env.REST_REVIEWS_NS)
         .collection("restaurants");
     } catch (e) {
       console.error(
